@@ -2,27 +2,69 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("relations", {
-      id: {
+    const transaction = await queryInterface.sequelize.transaction(); //برای احراز من به دیتا بیس
+
+    try {
+      await queryInterface.addColumn("articles", "author_id", {
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER,
-      },
-      name: {
-        type: Sequelize.STRING,
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-    });
+        references: {
+          model: "users",
+          key: "id",
+        },
+
+        onDelete: "CASCADE",
+      });
+
+      await queryInterface.createTable("tags_articles", {
+        article_id: {
+          type: Sequelize.INTEGER.UNSIGNED,
+          allowNull: false,
+          references: {
+            model: "articles",
+            key: "id",
+          },
+
+          onDelete: "CASCADE",
+        },
+
+        tag_id: {
+          type: Sequelize.INTEGER.UNSIGNED,
+          allowNull: false,
+          references: {
+            model: "tags",
+            key: "id",
+          },
+
+          onDelete: "CASCADE",
+        },
+      });
+
+      await queryInterface.addConstraint("tags_articles", {
+        fields: ["article_id", "tag_id"],
+        type: "unique",
+        name: "unique_article_tag",
+      });
+
+      await transaction.commit();// انجام تغییرات بر روی دیتا بیس
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
   },
+
   async down(queryInterface, Sequelize) {
+    const transaction = await queryInterface.sequelize.transaction();
+
+    try {
+      await queryInterface.removeColumn("articles", "author_id");
+      await queryInterface.dropTable("tags_articles");
+      await transaction.commit();
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
+
     await queryInterface.dropTable("relations");
   },
 };
