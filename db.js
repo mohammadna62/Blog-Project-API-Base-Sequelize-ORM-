@@ -1,10 +1,7 @@
 const { Sequelize } = require("sequelize");
 const configs = require("./configs");
 
-const User = require("./models/User");
-const Tag = require("./models/Tag");
-const TagsArticles = require("./models/TagsArticles");
-const Article = require("./models/Articles");
+
 
 const db = new Sequelize({
   host: configs.db.host,
@@ -15,6 +12,15 @@ const db = new Sequelize({
   dialect: configs.db.dialect,
   logging: configs.isProduction ? false : console.log,
 });
+//* JsDoc
+/** @type {import('sequelize').ModelCtor<import('sequelize').Model<any , any>}*/
+const User = require("./models/User")(db);
+/** @type {import('sequelize').ModelCtor<import('sequelize').Model<any , any>}*/
+const Tag = require("./models/Tag")(db);
+/** @type {import('sequelize').ModelCtor<import('sequelize').Model<any , any>}*/
+const TagsArticles = require("./models/TagsArticles")(db);
+/** @type {import('sequelize').ModelCtor<import('sequelize').Model<any , any>}*/
+const Article = require("./models/Articles")(db);
 
 User.hasMany(Article, {
   foreingKey: "author_id",

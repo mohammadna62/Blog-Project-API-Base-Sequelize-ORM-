@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "db": "dotenv -e .env -- sequelize-cli db:create --config ./sequelizeConfigs.js"  
+    "db": "dotenv -e .env -- sequelize-cli db:create --config ./sequelizeConfigs.js"  ,
+    "migrate": "dotenv -e .env -- sequelize-cli db:migrate --config ./sequelizeConfigs.js"  
   },
   "keywords": [],
   "author": "Mohammad Naghavi Olayei",
