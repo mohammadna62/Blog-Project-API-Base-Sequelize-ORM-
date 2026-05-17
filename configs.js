@@ -18,9 +18,12 @@ module.exports = {
     refreshTokenExpiresInSeconds: process.env.REFRESH_TOKEN_EXPIRES_IN_SECONDS,
 
     google: {},
+
   },
 
-  redis: {},
+  redis: {
+    uri:process.env.REDIS_URI
+  },
 
   domain: process.env.DOMAIN,
 
