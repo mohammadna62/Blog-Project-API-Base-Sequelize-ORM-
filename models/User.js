@@ -6,8 +6,8 @@ const User = (sequelize) =>
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
         primaryKey: true,
-        allowNull:false,
         autoIncrement: true,
       },
       name: {
@@ -21,7 +21,7 @@ const User = (sequelize) =>
       username: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique:true,
+        unique: true,
       },
       email: {
         type: DataTypes.STRING,
@@ -36,13 +36,13 @@ const User = (sequelize) =>
         type: DataTypes.ENUM,
         values: ["user", "admin"],
         allowNull: false,
-        default: "user",
+        defaultValue: "user",
       },
       provider: {
         type: DataTypes.ENUM,
         values: ["local", "google"],
         allowNull: false,
-        default: "local",
+        defaultValue: "local",
       },
     },
     {

@@ -10,7 +10,7 @@ const registerSchema = yup.object().shape({
     .required(),
   email: yup.string().email().max(255).required(),
   password: yup.string().min(8).optional(),
-  confirmPassword: yup.string().oneOf([yup.ref("password")]).required(),
+  confirmPassword: yup.string().oneOf([yup.ref("password")]),
 });
 
 module.exports = registerSchema;

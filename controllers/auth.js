@@ -1,4 +1,4 @@
-const User = require("./../db")//! Because used of Sequelize
+const {User} = require("./../db")//! Because used of Sequelize
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken");
 const configs = require("../configs");
@@ -40,3 +40,6 @@ exports.register = async (req, res, next) => {
     next(err);
   }
 };
+exports.login= async(req , res , next)=>{
+  //Codes
+}
