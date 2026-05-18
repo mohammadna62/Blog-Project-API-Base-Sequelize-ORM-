@@ -41,4 +41,4 @@ Tag.belongsToMany(Article, {
   foreingKey: "tag_id",
 });
 
-module.exports = db;
+module.exports = {db,User,Tag,Article,TagsArticles};

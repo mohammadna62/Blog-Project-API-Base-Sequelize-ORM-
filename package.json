@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev":"dotenv -e nodemon server.js",
+    "dev":"dotenv -e .env -- nodemon server.js",
     "db": "dotenv -e .env -- sequelize-cli db:create --config ./sequelizeConfigs.js",
     "migrate": "dotenv -e .env -- sequelize-cli db:migrate --config ./sequelizeConfigs.js"
   },
