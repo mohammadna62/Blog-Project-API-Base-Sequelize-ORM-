@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, "public")));
 
-// app.use(localStrategy);
+ passport.use(localStrategy);
 
 // app.get("/captcha", captchaController.get);
 app.use("/auth", authRoutes);
