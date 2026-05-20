@@ -18,9 +18,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.resolve(__dirname, "public")));
 
- passport.use(localStrategy);
+passport.use(localStrategy);
 
-// app.get("/captcha", captchaController.get);
+//* This Route use for Captcha test
+app.get('/',(req , res )=>{
+    return res.render("login.ejs")
+})
+
+app.get("/captcha", captchaController.get);
 app.use("/auth", authRoutes);
 app.use("/articles", articlesRoutes);
 
