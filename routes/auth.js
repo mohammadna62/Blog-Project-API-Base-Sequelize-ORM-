@@ -4,6 +4,7 @@ const registerSchema = require("./../validators/register")
 const loginSchema = require("./../validators/login")
 const validate = require("./../middlewares/validate")
 const passport = require("passport");
+const captcha = require("../middlewares/captcha")
 
 const router = express.Router()
 
@@ -12,6 +13,7 @@ router
   .route("/login")
   .post(
     validate(loginSchema),
+    captcha,
     passport.authenticate("local", { session: false }),
     controller.login
   );
