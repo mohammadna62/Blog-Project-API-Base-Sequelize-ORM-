@@ -7,37 +7,33 @@ exports.create = async (req, res, next) => {
     const slug = slugify(title, { lower: true });
     const authorId = req.user.id;
 
-    tags = Array.isArray(tags) ? tags : [tags];//* Convert to an array to have the same type of data (String or Array)
+    tags = Array.isArray(tags) ? tags : [tags]; //* Convert to an array to have the same type of data (String or Array)
 
     tags = tags.map((tag) =>
-      Tag.findOrCreate({ where: { title: tag.trim() } })
+      Tag.findOrCreate({ where: { title: tag.trim() } }),
     );
     tags = await Promise.all(tags);
 
-    // const fileBuffer = req.file.buffer;
-    // const coverPath = `/images/covers/${Date.now()}${req.file.originalname}`;
+    let article;
+    const coverPath = `images/covers/${req.file?.filename}`;
+    try {
+      article = await Article.create({
+        title,
+        content,
+        slug,
+        author_id: authorId,
+        cover: coverPath,
+      });
 
-    // sharp(fileBuffer)
-    //   .png({
-    //     quality: 60,
-    //   })
-    //   .toFile(`./public${coverPath}`);
+      await article.addTag(tags.map((tag) => tag[0]));
+      console.log("Tagggggggggggggggggggggssssss ->", tags[0]);
 
-    // const article = await Article.create({
-    //   title,
-    //   content,
-    //   slug,
-    //   author_id,
-    //   cover: coverPath,
-    // });
-
-    // tags.forEach(async (tag) => {
-    //   await Article.addTag(article.id, Number(tag));
-    // });
-
-    // req.flash("success", "مقاله مورد نظر با موفقیت ایجاد شد");
-    // return res.redirect("/p-admin/create-article");
-    return res.json("ok")
+      return res
+        .status(201)
+        .json({ ...article.dataValues, tags: tags.map((tag) => tag[0].title) });
+    } catch (err) {
+      console.log("Error ->", err);
+    }
   } catch (err) {
     next(err);
   }

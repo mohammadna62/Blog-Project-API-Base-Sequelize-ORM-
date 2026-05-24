@@ -23,22 +23,22 @@ const TagsArticles = require("./models/TagsArticles")(db);
 const Article = require("./models/Articles")(db);
 
 User.hasMany(Article, {
-  foreingKey: "author_id",
+  foreignKey: "author_id",
   onDelete: "CASCADE",
 });
 
-Article.belongsTo(User, { foreingKey: "author_id", as: "author" });
+Article.belongsTo(User, { foreignKey: "author_id", as: "author" });
 
 Article.belongsToMany(Tag, {
   through: TagsArticles,
   onDelete: "CASCADE",
-  foreingKey: "article_id",
-});
+  foreignKey: "article_id",
+});//Article.addTag() create by sequelize and add to TagsArticles tabale
 
 Tag.belongsToMany(Article, {
   through: TagsArticles,
   onDelete: "CASCADE",
-  foreingKey: "tag_id",
+  foreignKey: "tag_id",
 });
 
 module.exports = {db,User,Tag,Article};
