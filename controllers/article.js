@@ -1,5 +1,5 @@
 const { default: slugify } = require("slugify");
-const { Article, Tag } = require("./../db");
+const { Article, Tag, User } = require("./../db");
 
 exports.create = async (req, res, next) => {
   try {
@@ -47,4 +47,37 @@ exports.create = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+};
+
+exports.findBySlug = async (req, res, next) => {
+  const article = await Article.findOne({
+    where: {
+      slug: req.params.slug,
+    },
+    attributes: {
+      exclude: ["author_id"],
+    },
+    include: [
+      {
+        model: User,
+        attributes: {
+          exclude: ["password"],
+        },
+        as: "author",
+      },
+    ],
+    include: [
+      {
+        model: Tag,
+        attributes: ["title"],
+        through: [],
+      },
+    ],
+  });
+  if (!article) {
+    return res.status(404).json({ message: "Article Not Found!!" });
+  }
+  const tags =article.dataValues.tags.map((tag) => tag.title);
+  return res.json({...article.dataValues,tags})
+  
 };
