@@ -47,4 +47,6 @@ router.route("/").post(
 );
 router.route("/:slug").get(controller.findBySlug)
 
+router.route("/:id").delete(passport.authenticate('accessToken',{session:false}),controller.deleteArticle)
+
 module.exports = router;
