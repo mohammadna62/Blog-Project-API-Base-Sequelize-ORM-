@@ -33,7 +33,7 @@ Article.belongsToMany(Tag, {
   through: TagsArticles,
   onDelete: "CASCADE",
   foreignKey: "article_id",
-});//Article.addTag() create by sequelize and add to TagsArticles tabale
+});//Article.addTag() create َAutomatically by sequelize and add to TagsArticles tabale
 
 Tag.belongsToMany(Article, {
   through: TagsArticles,
