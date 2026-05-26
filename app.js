@@ -6,6 +6,7 @@ const passport = require("passport");
 
 const localStrategy = require("./strategies/localStrategy");
 const jwtAccessTokenStrategy = require("./strategies/jwtAccessTokenStrategy")
+const googleStrategy = require("./strategies/googleStrategy")
 const captchaController = require("./controllers/captch");
 const authRoutes = require("./routes/auth");
 const articlesRoutes = require("./routes/articles");
@@ -21,6 +22,7 @@ app.use(express.static(path.resolve(__dirname, "public")));
 
 passport.use(localStrategy);
 passport.use("accessToken",jwtAccessTokenStrategy);
+//passport.use(googleStrategy);
 
 //* This Route use for Captcha test
 app.get('/',(req , res )=>{
