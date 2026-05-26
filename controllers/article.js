@@ -1,5 +1,6 @@
 const { default: slugify } = require("slugify");
 const { Article, Tag, User } = require("./../db");
+const { calculateRelativeTimeDifference } = require("../utils/funcs");
 
 exports.create = async (req, res, next) => {
   try {
@@ -71,10 +72,23 @@ exports.findAll = async (req, res, next) => {
     ],
     order: [["created_at", "DESC"]],
   });
-  if (!articles) {
+  
+  if (!articles || articles.length === 0) {
     return res.status(404).json({ message: "Article Not Found!!" });
   }
-  return res.json(articles);
+
+ console.log(typeof articles);
+ 
+  const articlesFullData = articles.map(article => {
+    const plainArticle = article.toJSON(); //wroten this code Because we did not used raw:true 
+    const createdAt = calculateRelativeTimeDifference(article.created_at);
+    return {
+      ...plainArticle,
+      createdAtRelative: createdAt, 
+    };
+  });
+  
+  return res.json(articlesFullData);
 };
 
 exports.findBySlug = async (req, res, next) => {
