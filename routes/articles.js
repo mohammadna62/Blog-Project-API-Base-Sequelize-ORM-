@@ -44,7 +44,7 @@ router.route("/").post(
   validate(createArticleSchema),
 
   controller.create
-);
+).get(controller.findAll);
 router.route("/:slug").get(controller.findBySlug)
 
 router.route("/:id").delete(passport.authenticate('accessToken',{session:false}),controller.deleteArticle)

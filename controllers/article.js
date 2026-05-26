@@ -48,6 +48,34 @@ exports.create = async (req, res, next) => {
     next(err);
   }
 };
+exports.findAll = async (req, res, next) => {
+  const articles = await Article.findAll({
+    attributes: {
+      exclude: ["author_id"],
+    },
+    include: [
+      {
+        model: User,
+        attributes: {
+          exclude: ["password", "role"],
+        },
+        as: "author",
+      },
+      {
+        model: Tag,
+        attributes: ["title"],
+        through: {
+          attributes: [],
+        },
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+  if (!articles) {
+    return res.status(404).json({ message: "Article Not Found!!" });
+  }
+  return res.json(articles);
+};
 
 exports.findBySlug = async (req, res, next) => {
   const article = await Article.findOne({
@@ -65,12 +93,12 @@ exports.findBySlug = async (req, res, next) => {
         },
         as: "author",
       },
-    ],
-    include: [
       {
         model: Tag,
         attributes: ["title"],
-        through: [],
+        through: {
+          attributes: [],
+        },
       },
     ],
   });
