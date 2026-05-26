@@ -19,6 +19,7 @@ router
   );
 
 
-
+router.route('/me').get(passport.authenticate('accessToken',{session:false}), controller.getMe)
+router.route("/logout").post(passport.authenticate("accessToken",{session:false}),controller.logout)
 
 module.exports = router
