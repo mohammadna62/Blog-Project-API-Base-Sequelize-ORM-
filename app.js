@@ -22,7 +22,7 @@ app.use(express.static(path.resolve(__dirname, "public")));
 
 passport.use(localStrategy);
 passport.use("accessToken",jwtAccessTokenStrategy);
-//passport.use(googleStrategy);
+passport.use(googleStrategy);
 
 //* This Route use for Captcha test
 app.get('/',(req , res )=>{
