@@ -24,12 +24,14 @@ router
     passport.authenticate("accessToken", { session: false }),
     controller.getMe,
   );
+router.route("/refresh").post(passport.authenticate("refreshToken",{session:false}),controller.refreshToken);
 router
   .route("/logout")
   .post(
     passport.authenticate("accessToken", { session: false }),
     controller.logout,
   );
+
 router
   .route("/google")
   .get(passport.authenticate("google", { scope: ["profile", "email"] }));

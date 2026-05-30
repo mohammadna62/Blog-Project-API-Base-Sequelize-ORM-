@@ -74,10 +74,20 @@ exports.getMe = async (req, res) => {
   const user = req.user;
   return res.status(200).json(user);
 };
-
+exports.refreshToken = async (req, res) => {
+  const user = req.user;
+  const accessToken = jwt.sign(
+    {
+      id: user.id,
+      role: user.role,
+    },
+    configs.auth.accessTokenSecretKey,
+    { expiresIn: configs.auth.accessTokenExpiresInSeconds + "s" },
+  );
+  return res.json({accessToken})
+};
 exports.logout = async (req, res) => {
-  const redisKey = `refreshToken:${req.user.id}`
-  await redis.del(redisKey)
-  return res.status(200).json({message:"User Logout Successfully"})
-  
+  const redisKey = `refreshToken:${req.user.id}`;
+  await redis.del(redisKey);
+  return res.status(200).json({ message: "User Logout Successfully" });
 };
