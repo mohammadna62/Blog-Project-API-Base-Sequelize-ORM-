@@ -30,7 +30,7 @@ exports.create = async (req, res, next) => {
           cover: coverPath,
         });
 
-        await article.addTag(tags.map((tag) => tag[0])); //Article.addTag() create َAutomatically by sequelize and add to TagsArticles tabale
+        await article.addTags(tags.map((tag) => tag[0])); //Article.addTags() create َAutomatically by sequelize and add to TagsArticles tabale
 
         return res.status(201).json({
           ...article.dataValues,
@@ -72,22 +72,22 @@ exports.findAll = async (req, res, next) => {
     ],
     order: [["created_at", "DESC"]],
   });
-  
+
   if (!articles || articles.length === 0) {
     return res.status(404).json({ message: "Article Not Found!!" });
   }
 
- console.log(typeof articles);
- 
-  const articlesFullData = articles.map(article => {
-    const plainArticle = article.toJSON(); //wroten this code Because we did not used raw:true 
+  console.log(typeof articles);
+
+  const articlesFullData = articles.map((article) => {
+    const plainArticle = article.toJSON(); //wroten this code Because we did not used raw:true
     const createdAt = calculateRelativeTimeDifference(article.created_at);
     return {
       ...plainArticle,
-      createdAtRelative: createdAt, 
+      createdAtRelative: createdAt,
     };
   });
-  
+
   return res.json(articlesFullData);
 };
 
@@ -135,4 +135,76 @@ exports.deleteArticle = async (req, res, next) => {
   await Article.destroy({ where: { id } });
 
   return res.status(200).json({ message: "Article removed successfully" });
+};
+exports.update = async (req, res) => {
+  const { id } = req.params;
+
+  let article = await Article.findByPk(id, {
+    include: {
+      model: Tag,
+      through: {
+        attributes: [],
+      },
+    },
+  });
+
+  if (!article) {
+    return res.status(404).json({ message: "Article not found !!" });
+  }
+
+  if (article.author_id !== req.user.id) {
+    return res.status(403).json({ message: "Forbidden !!" });
+  }
+
+  let { title, content, tags } = req.body;
+  let slug = slugify(title, { lower: true });
+  const copyOfSlug = slug;
+  const authorId = req.user.id;
+
+  tags = Array.isArray(tags) ? tags : [tags]; //* Convert to an array to have the same type of data (String or Array)
+
+  tags = tags.map((tag) => Tag.findOrCreate({ where: { title: tag.trim() } }));
+  tags = await Promise.all(tags);
+
+  let updatedArticle;
+  let i = 1;
+  const coverPath = `images/covers/${req.file?.filename}`;
+
+  while (!updatedArticle) {
+    try {
+      updatedArticle = await Article.update(
+        {
+          title,
+          content,
+          slug,
+          author_id: authorId,
+          cover: coverPath,
+        },
+        {
+          where: { id },
+        },
+      );
+    } catch (err) {
+      if (err.original.code === "ER_DUP_ENTRY") {
+        slug = `${copyOfSlug}-${i++}`;
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  await article.removeTags(article.tags); //Article.removeTages() create َAutomatically by sequelize and remove from TagsArticles tabale
+
+  await article.addTags(tags.map((tag) => tag[0])); //Article.addTags() create َAutomatically by sequelize and add to TagsArticles tabale
+
+  article = await Article.findByPk(id, {
+    attributes: {
+      exclude: ["author_id"],
+    },
+  });
+
+  return res.json({
+    ...article.dataValues,
+    tags: tags.map((tag) => tag[0].title),
+  });
 };

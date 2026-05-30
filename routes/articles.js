@@ -38,15 +38,29 @@ const uploader = multer({
 
 const router = express.Router();
 
-router.route("/").post(
-  passport.authenticate("accessToken", { session: false }),
-  uploader.single("cover"),
-  validate(createArticleSchema),
+router
+  .route("/")
+  .post(
+    passport.authenticate("accessToken", { session: false }),
+    uploader.single("cover"),
+    validate(createArticleSchema),
 
-  controller.create
-).get(controller.findAll);
-router.route("/:slug").get(controller.findBySlug)
+    controller.create,
+  )
+  .get(controller.findAll);
+router.route("/:slug").get(controller.findBySlug);
 
-router.route("/:id").delete(passport.authenticate('accessToken',{session:false}),controller.deleteArticle)
+router
+  .route("/:id")
+  .delete(
+    passport.authenticate("accessToken", { session: false }),
+    controller.deleteArticle,
+  )
+  .put(
+    passport.authenticate("accessToken", { session: false }),
+    uploader.single("cover"),
+    validate(createArticleSchema),
+    controller.update
+  );
 
 module.exports = router;
